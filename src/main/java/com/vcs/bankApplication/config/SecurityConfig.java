@@ -3,6 +3,7 @@ package com.vcs.bankApplication.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -21,10 +22,10 @@ public class SecurityConfig {
 
     @Bean
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests((requests) ->
+        http.csrf(AbstractHttpConfigurer::disable).authorizeHttpRequests((requests) ->
                 requests.requestMatchers("/myAccount", "/myBalance", "/myLoan", "myLoan").authenticated());
         http.authorizeHttpRequests((requests) ->
-                requests.requestMatchers("/contact", "/notices").permitAll());
+                requests.requestMatchers("/contact", "/notices", "/register").permitAll());
         http.formLogin(withDefaults());
         http.httpBasic(withDefaults());
         return http.build();
@@ -41,10 +42,10 @@ public class SecurityConfig {
 //        return new InMemoryUserDetailsManager(admin);
 //    }
 
-    @Bean
-    public UserDetailsService userDetailsService(DataSource dataSource) {
-        return new JdbcUserDetailsManager(dataSource);
-    }
+//    @Bean
+//    public UserDetailsService userDetailsService(DataSource dataSource) {
+//        return new JdbcUserDetailsManager(dataSource);
+//    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
